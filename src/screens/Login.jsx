@@ -1,11 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
 import axios from 'axios';
 import message from '../message.json';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 
-const Login = () => {
+// const BASE_URL = ;
+
+const Login = ({ setIsLoggedIn }) => {
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
 
@@ -51,12 +54,13 @@ const Login = () => {
             formData.append('email', inputData.email);
             formData.append('password', inputData.password);
 
-            const response = await axios.post('http://192.168.147.208:7072/api/college2career/login', formData, {
+            const response = await axios.post(`${Constants.expoConfig.extra.BASE_URL}/api/college2career/login`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
+            // console.log(response.data)
             if (response.data.status === false) {
                 setApiResponse({ message: response.data.message, type: 'error' });
                 setInputData((prev) => ({ ...prev, password: '' }));
@@ -64,6 +68,7 @@ const Login = () => {
                 const token = response.data.data
                 await AsyncStorage.setItem("userToken", token)
                 setInputData({ email: '', password: '' });
+                setIsLoggedIn(true)
             }
         } catch (error) {
             console.log("error is: " + error.message)
