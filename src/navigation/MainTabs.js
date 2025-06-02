@@ -9,6 +9,7 @@ import Home from '../screens/Home';
 import Applications from '../screens/Applications';
 import Companies from '../screens/Companies';
 import Profile from '../screens/Profile';
+import Loader from '../components/Loader';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -25,7 +26,7 @@ const MainTabs = ({ setIsLoggedIn }) => {
                     style: 'destructive',
                     onPress: async () => {
                         await AsyncStorage.removeItem('userToken');
-                        setIsLoggedIn(false); // ✅ This will trigger App.js to switch screen
+                        setIsLoggedIn(false);
                     },
                 },
             ],
@@ -67,7 +68,6 @@ const MainTabs = ({ setIsLoggedIn }) => {
                     ),
                 }}
             />
-
         </Tab.Navigator>
 
     );

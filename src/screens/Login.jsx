@@ -5,10 +5,11 @@ import message from '../message.json';
 import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
-
-// const BASE_URL = ;
+import { useLoader } from '../components/LoaderContext';
 
 const Login = ({ setIsLoggedIn }) => {
+    const { setLoading } = useLoader();
+
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
 
@@ -49,6 +50,7 @@ const Login = ({ setIsLoggedIn }) => {
         }
 
         try {
+            setLoading(true)
             const formData = new FormData();
 
             formData.append('email', inputData.email);
@@ -64,16 +66,21 @@ const Login = ({ setIsLoggedIn }) => {
             if (response.data.status === false) {
                 setApiResponse({ message: response.data.message, type: 'error' });
                 setInputData((prev) => ({ ...prev, password: '' }));
+                setLoading(false);
             } else {
                 const token = response.data.data
                 await AsyncStorage.setItem("userToken", token)
                 setInputData({ email: '', password: '' });
                 setIsLoggedIn(true)
+                setLoading(false);
             }
         } catch (error) {
             console.log("error is: " + error.message)
             setApiResponse({ message: 'Something went wrong.', type: 'error' });
             setInputData({ email: '', password: '' });
+            setLoading(false);
+        } finally {
+            setLoading(false)
         }
     };
 

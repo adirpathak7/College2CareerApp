@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { LoaderProvider } from './src/components/LoaderContext';
+import Loader from './src/components/Loader';
 import Login from './src/screens/Login';
 import MainTabs from './src/navigation/MainTabs';
 
@@ -22,18 +23,21 @@ export default function App() {
   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {!isLoggedIn ? (
-          <Stack.Screen name="Login">
-            {(props) => <Login {...props} setIsLoggedIn={setIsLoggedIn} />}
-          </Stack.Screen>
-        ) : (
-          <Stack.Screen name="MainTabs">
-            {(props) => <MainTabs {...props} setIsLoggedIn={setIsLoggedIn} />}
-          </Stack.Screen>
-        )}
-      </Stack.Navigator>
-    </NavigationContainer>
+    <LoaderProvider>
+      <Loader />
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          {!isLoggedIn ? (
+            <Stack.Screen name="Login">
+              {(props) => <Login {...props} setIsLoggedIn={setIsLoggedIn} />}
+            </Stack.Screen>
+          ) : (
+            <Stack.Screen name="MainTabs">
+              {(props) => <MainTabs {...props} setIsLoggedIn={setIsLoggedIn} />}
+            </Stack.Screen>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </LoaderProvider>
   );
 }
