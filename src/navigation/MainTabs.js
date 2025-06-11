@@ -7,7 +7,7 @@ import { Alert } from 'react-native';
 
 import Home from '../screens/Home';
 import Applications from '../screens/Applications';
-import Companies from '../screens/Companies';
+import Vacancies from '../screens/Vacancies';
 import Profile from '../screens/Profile';
 import Loader from '../components/Loader';
 
@@ -42,14 +42,14 @@ const MainTabs = ({ setIsLoggedIn }) => {
                     let iconName;
                     if (route.name === 'Home') iconName = 'home-outline';
                     else if (route.name === 'Applications') iconName = 'document-text-outline';
-                    else if (route.name === 'Companies') iconName = 'business-outline';
+                    else if (route.name === 'Vacancies') iconName = 'business-outline';
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },
             })}
         >
             <Tab.Screen name="Home" component={Home} />
             <Tab.Screen name="Applications" component={Applications} />
-            <Tab.Screen name="Companies" component={Companies} />
+            <Tab.Screen name="Vacancies" component={Vacancies} />
             <Tab.Screen
                 name="Profile"
                 component={Profile}

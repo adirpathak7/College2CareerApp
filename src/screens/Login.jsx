@@ -1,21 +1,33 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import {
+    View, Text, TextInput, TouchableOpacity,
+    StyleSheet, ScrollView, KeyboardAvoidingView,
+    Platform, Animated
+} from 'react-native';
 import axios from 'axios';
 import message from '../message.json';
-import { Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { useLoader } from '../components/LoaderContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Login = ({ setIsLoggedIn }) => {
     const { setLoading } = useLoader();
-
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
-
     const [inputData, setInputData] = useState({ email: '', password: '' });
     const [inputError, setInputError] = useState({ email: '', password: '' });
     const [apiResponse, setApiResponse] = useState({ message: '', type: '' });
+
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        Animated.timing(fadeAnim, {
+            toValue: 1,
+            duration: 800,
+            useNativeDriver: true,
+        }).start();
+    }, []);
 
     const handleInputChange = (name, value) => {
         setInputData((prev) => ({ ...prev, [name]: value }));
@@ -33,8 +45,9 @@ const Login = ({ setIsLoggedIn }) => {
     }, [apiResponse]);
 
     const handleLogin = async () => {
+        // console.log('clicked');
+        
         const errors = {};
-
         if (!inputData.password) {
             errors.password = message.empty + ' password';
             passwordRef.current.focus();
@@ -43,16 +56,14 @@ const Login = ({ setIsLoggedIn }) => {
             errors.email = message.empty + ' email';
             emailRef.current.focus();
         }
-
         if (Object.keys(errors).length > 0) {
             setInputError(errors);
             return;
         }
 
         try {
-            setLoading(true)
+            setLoading(true);
             const formData = new FormData();
-
             formData.append('email', inputData.email);
             formData.append('password', inputData.password);
 
@@ -62,86 +73,134 @@ const Login = ({ setIsLoggedIn }) => {
                 },
             });
 
-            // console.log(response.data)
             if (response.data.status === false) {
                 setApiResponse({ message: response.data.message, type: 'error' });
                 setInputData((prev) => ({ ...prev, password: '' }));
-                setLoading(false);
             } else {
-                const token = response.data.data
-                await AsyncStorage.setItem("userToken", token)
+                const token = response.data.data;
+                await AsyncStorage.setItem("userToken", token);
                 setInputData({ email: '', password: '' });
-                setIsLoggedIn(true)
-                setLoading(false);
+                setIsLoggedIn(true);
             }
         } catch (error) {
-            console.log("error is: " + error.message)
+            console.log("error is: " + error.message);
             setApiResponse({ message: 'Something went wrong.', type: 'error' });
             setInputData({ email: '', password: '' });
-            setLoading(false);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.heading}>Login</Text>
+        <LinearGradient
+            colors={['#4facfe', '#00f2fe']}
+            style={styles.gradient}
+        >
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={{ flex: 1 }}
+            >
+                <ScrollView contentContainerStyle={styles.container}>
+                    <Animated.View style={{ opacity: fadeAnim, width: '100%' }}>
+                        <Text style={styles.heading}>Welcome Back 👋</Text>
 
-            {apiResponse.message ? (
-                <Text style={[styles.responseMessage, apiResponse.type === 'success' ? styles.success : styles.error]}>
-                    {apiResponse.type === 'success' ? 'Success: ' : 'Error: '}
-                    {apiResponse.message}
-                </Text>
-            ) : null}
+                        {apiResponse.message ? (
+                            <Text style={[
+                                styles.responseMessage,
+                                apiResponse.type === 'success' ? styles.success : styles.error
+                            ]}>
+                                {apiResponse.type === 'success' ? 'Success: ' : 'Error: '}
+                                {apiResponse.message}
+                            </Text>
+                        ) : null}
 
-            <TextInput
-                style={styles.input}
-                placeholder="Email"
-                value={inputData.email}
-                ref={emailRef}
-                onChangeText={(text) => handleInputChange('email', text)}
-                autoCapitalize="none"
-            />
-            {inputError.email && <Text style={styles.errorText}>{inputError.email}</Text>}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Email"
+                            value={inputData.email}
+                            ref={emailRef}
+                            onChangeText={(text) => handleInputChange('email', text)}
+                            autoCapitalize="none"
+                            placeholderTextColor="#888"
+                        />
+                        {inputError.email && <Text style={styles.errorText}>{inputError.email}</Text>}
 
-            <TextInput
-                style={styles.input}
-                placeholder="Password"
-                value={inputData.password}
-                ref={passwordRef}
-                onChangeText={(text) => handleInputChange('password', text)}
-                secureTextEntry
-            />
-            {inputError.password && <Text style={styles.errorText}>{inputError.password}</Text>}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Password"
+                            value={inputData.password}
+                            ref={passwordRef}
+                            onChangeText={(text) => handleInputChange('password', text)}
+                            secureTextEntry
+                            placeholderTextColor="#888"
+                        />
+                        {inputError.password && <Text style={styles.errorText}>{inputError.password}</Text>}
 
-            <Button title="Login" onPress={handleLogin} />
-        </View>
+                        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                            <Text style={styles.buttonText}>Login</Text>
+                        </TouchableOpacity>
+                    </Animated.View>
+                </ScrollView>
+            </KeyboardAvoidingView>
+        </LinearGradient>
     );
-}
+};
+
 export default Login;
 
 const styles = StyleSheet.create({
-    container: {
+    gradient: {
         flex: 1,
+    },
+    container: {
+        flexGrow: 1,
         justifyContent: 'center',
-        padding: 20,
+        alignItems: 'center',
+        padding: 24,
     },
     heading: {
-        fontSize: 24,
-        marginBottom: 20,
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#fff',
+        marginBottom: 30,
         textAlign: 'center',
     },
     input: {
-        borderWidth: 1,
-        borderColor: '#aaa',
-        padding: 10,
+        backgroundColor: '#ffffffcc',
+        padding: 14,
         marginBottom: 15,
-        borderRadius: 5,
+        borderRadius: 12,
+        width: '100%',
+        fontSize: 16,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        // elevation: 3,
     },
     errorText: {
-        color: 'red',
+        color: '#fff',
         marginBottom: 10,
+        alignSelf: 'flex-start',
+    },
+    button: {
+        backgroundColor: '#fff',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        borderRadius: 30,
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 4,
+        width: '100%',
+        marginTop: 10,
+    },
+    buttonText: {
+        color: '#00b4db',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
     responseMessage: {
         padding: 10,
