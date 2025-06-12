@@ -45,16 +45,15 @@ const Login = ({ setIsLoggedIn }) => {
     }, [apiResponse]);
 
     const handleLogin = async () => {
-        // console.log('clicked');
-        
         const errors = {};
+
         if (!inputData.password) {
             errors.password = message.empty + ' password';
-            passwordRef.current.focus();
+            passwordRef.current?.focus(), 100;
         }
         if (!inputData.email) {
             errors.email = message.empty + ' email';
-            emailRef.current.focus();
+            emailRef.current?.focus(), 100;
         }
         if (Object.keys(errors).length > 0) {
             setInputError(errors);
@@ -71,6 +70,7 @@ const Login = ({ setIsLoggedIn }) => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
+                timeout: 3000,
             });
 
             if (response.data.status === false) {
@@ -84,7 +84,11 @@ const Login = ({ setIsLoggedIn }) => {
             }
         } catch (error) {
             console.log("error is: " + error.message);
-            setApiResponse({ message: 'Something went wrong.', type: 'error' });
+            if (error.code === 'ECONNREFUSED') {
+                setApiResponse({ message: 'Server is taking too long to respond.', type: 'error' });
+            } else {
+                setApiResponse({ message: 'Something went wrong.', type: 'error' });
+            }
             setInputData({ email: '', password: '' });
         } finally {
             setLoading(false);
@@ -97,10 +101,13 @@ const Login = ({ setIsLoggedIn }) => {
             style={styles.gradient}
         >
             <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
                 style={{ flex: 1 }}
+                keyboardVerticalOffset={Platform.OS === "android" ? 80 : 0}
             >
+
                 <ScrollView contentContainerStyle={styles.container}>
+                    {/* next time aisa kuch hua to <View style={{ width: '100%' }}> ye bhi add kr dena */}
                     <Animated.View style={{ opacity: fadeAnim, width: '100%' }}>
                         <Text style={styles.heading}>Welcome Back 👋</Text>
 
@@ -176,7 +183,6 @@ const styles = StyleSheet.create({
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 4,
-        // elevation: 3,
     },
     errorText: {
         color: '#fff',
