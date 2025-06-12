@@ -6,9 +6,6 @@ import {
   StyleSheet,
   FlatList,
   Image,
-  TouchableOpacity,
-  ActivityIndicator,
-  ScrollView,
   Animated
 } from 'react-native';
 import axios from 'axios';
@@ -25,14 +22,18 @@ const statusColors = {
 
 const Applications = () => {
   const [applications, setApplications] = useState([]);
-  const { setLoading } = useLoader();
+  const { setLoading, loading } = useLoader();
   const [fadeAnim] = useState(new Animated.Value(0));
 
   const fetchApplications = async () => {
     try {
+      setLoading(true);
       const token = await AsyncStorage.getItem('userToken');
-      const res = await axios.get(`${Constants.expoConfig.extra.BASE_URL}/api/college2career/users/applications/getAllAppliedApplicationsByStudentId`,
-        { headers: { Authorization: `Bearer ${token}` } }
+      const res = await axios.get(
+        `${Constants.expoConfig.extra.BASE_URL}/api/college2career/users/applications/getAllAppliedApplicationsByStudentId`,
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
       );
       if (res?.data?.status) {
         setApplications(res.data.data);
@@ -67,14 +68,26 @@ const Applications = () => {
 
       <View style={styles.row}>
         <Text style={styles.label}>📍 {item.city}, {item.state}</Text>
-        <Text style={[styles.status, { backgroundColor: statusColors[item.status] }]}>{item.status}</Text>
+        <Text style={[styles.status, { backgroundColor: statusColors[item.status] }]}>
+          {item.status}
+        </Text>
       </View>
 
-      <Text style={styles.meta}><Text style={styles.bold}>Type:</Text> {item.type.toUpperCase()} | <Text style={styles.bold}>Location:</Text> {item.locationType}</Text>
-      <Text style={styles.meta}><Text style={styles.bold}>Package:</Text> {item.annualPackage}</Text>
-      <Text style={styles.meta}><Text style={styles.bold}>Eligibility:</Text> {item.eligibility_criteria}</Text>
+      <Text style={styles.meta}>
+        <Text style={styles.bold}>Type:</Text> {item.type.toUpperCase()} |{' '}
+        <Text style={styles.bold}>Location:</Text> {item.locationType}
+      </Text>
+      <Text style={styles.meta}>
+        <Text style={styles.bold}>Package:</Text> {item.annualPackage}
+      </Text>
+      <Text style={styles.meta}>
+        <Text style={styles.bold}>Eligibility:</Text> {item.eligibility_criteria}
+      </Text>
 
-      <Text style={styles.date}><Ionicons name="calendar" size={14} /> Applied on: {new Date(item.appliedDate).toDateString()}</Text>
+      <Text style={styles.date}>
+        <Ionicons name="calendar" size={14} /> Applied on:{' '}
+        {new Date(item.appliedDate).toDateString()}
+      </Text>
 
       {item.status === 'rejected' && (
         <Text style={styles.reason}>Reason: {item.reason}</Text>
@@ -84,29 +97,30 @@ const Applications = () => {
 
   return (
     <View style={styles.container}>
-      {/* <Text style={styles.headerText}>📄 My Applications</Text> */}
-      <FlatList
-        data={applications}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={renderApplication}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-      />
+      {!loading && applications.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>You haven’t applied to any jobs yet.</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={applications}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderApplication}
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+        />
+      )}
     </View>
   );
-}
+};
 
 export default Applications;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
     backgroundColor: '#f2f2f2'
-  },
-  headerText: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 10
   },
   card: {
     backgroundColor: '#fff',
@@ -179,9 +193,15 @@ const styles = StyleSheet.create({
     color: '#dc3545',
     fontStyle: 'italic'
   },
-  loadingContainer: {
+  emptyContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    paddingTop: 100
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#777',
+    textAlign: 'center'
   }
 });

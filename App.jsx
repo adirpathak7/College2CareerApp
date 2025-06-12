@@ -6,34 +6,30 @@ import { LoaderProvider } from './src/components/LoaderContext';
 import Loader from './src/components/Loader';
 import Login from './src/screens/Login';
 import MainTabs from './src/navigation/MainTabs';
+import AppNavigator from './src/navigation/AppNavigator';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkToken = async () => {
       const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        setIsLoggedIn(true);
-      }
+      setIsLoggedIn(!!token);
+      setLoading(false);
     };
     checkToken();
   }, []);
+
+  if (loading) return null;
 
   return (
     <LoaderProvider>
       <Loader />
       <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {!isLoggedIn ? (
-            <Stack.Screen name="Login" component={Login} />
-          ) : (
-            <Stack.Screen name="MainTabs" component={MainTabs} />
-
-          )}
-        </Stack.Navigator>
+        <AppNavigator isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
       </NavigationContainer>
     </LoaderProvider>
   );

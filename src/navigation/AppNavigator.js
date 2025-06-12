@@ -7,21 +7,7 @@ import MainTabs from './MainTabs';
 
 const Stack = createNativeStackNavigator();
 
-const AppNavigator = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const checkToken = async () => {
-            const token = await AsyncStorage.getItem('userToken');
-            setIsLoggedIn(!!token);
-            setLoading(false);
-        };
-        checkToken();
-    }, []);
-
-    if (loading) return null;
-
+const AppNavigator = ({ isLoggedIn, setIsLoggedIn }) => {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             {!isLoggedIn ? (
@@ -29,10 +15,11 @@ const AppNavigator = () => {
                     {() => <Login setIsLoggedIn={setIsLoggedIn} />}
                 </Stack.Screen>
             ) : (
-                <Stack.Screen name="MainTabs" component={MainTabs} />
+                <Stack.Screen name="MainTabs">
+                    {() => <MainTabs setIsLoggedIn={setIsLoggedIn} />}
+                </Stack.Screen>
             )}
         </Stack.Navigator>
     );
 };
-
 export default AppNavigator;

@@ -48,11 +48,11 @@ const Login = ({ setIsLoggedIn }) => {
         const errors = {};
 
         if (!inputData.password) {
-            errors.password = message.empty + ' password';
+            errors.password = message.empty + 'password';
             passwordRef.current?.focus(), 100;
         }
         if (!inputData.email) {
-            errors.email = message.empty + ' email';
+            errors.email = message.empty + 'email';
             emailRef.current?.focus(), 100;
         }
         if (Object.keys(errors).length > 0) {
@@ -70,7 +70,7 @@ const Login = ({ setIsLoggedIn }) => {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
-                timeout: 3000,
+                timeout: 6000,
             });
 
             if (response.data.status === false) {
@@ -80,7 +80,7 @@ const Login = ({ setIsLoggedIn }) => {
                 const token = response.data.data;
                 await AsyncStorage.setItem("userToken", token);
                 setInputData({ email: '', password: '' });
-                setIsLoggedIn(true);
+                setIsLoggedIn(true)
             }
         } catch (error) {
             console.log("error is: " + error.message);
