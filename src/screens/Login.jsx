@@ -79,6 +79,7 @@ const Login = ({ setIsLoggedIn }) => {
             } else {
                 const token = response.data.data;
                 await AsyncStorage.setItem("userToken", token);
+                await AsyncStorage.setItem('autoLogin', 'true');
                 setInputData({ email: '', password: '' });
                 setIsLoggedIn(true)
             }

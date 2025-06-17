@@ -26,6 +26,7 @@ const MainTabs = ({ setIsLoggedIn }) => {
                     style: 'destructive',
                     onPress: async () => {
                         await AsyncStorage.removeItem('userToken');
+                        await AsyncStorage.removeItem('autoLogin');
                         setIsLoggedIn(false);
                     },
                 },

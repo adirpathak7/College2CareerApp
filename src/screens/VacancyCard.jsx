@@ -7,7 +7,7 @@ import Constants from 'expo-constants';
 import axios from 'axios';
 
 
-const VacancyCard = ({ vacancyId, title, description, eligibility_criteria, anualPackage, locationType, type, industry, companyName }) => {
+const VacancyCard = ({ vacancyId, title, description, eligibility_criteria, annualPackage, locationType, type, industry, companyName }) => {
     const { setLoading } = useLoader()
 
     const handleNewApplication = async () => {
@@ -42,7 +42,7 @@ const VacancyCard = ({ vacancyId, title, description, eligibility_criteria, anua
             <Paragraph>{description}</Paragraph>
             <View style={styles.details}>
                 <Text style={styles.detailText}>Eligibility: {eligibility_criteria}</Text>
-                <Text style={styles.detailText}>Anual Package: {anualPackage}</Text>
+                <Text style={styles.detailText}>Anual Package: {annualPackage}</Text>
                 <Text style={styles.detailText}>Industry: {industry}</Text>
                 <Text style={styles.detailText}>Location: {locationType}</Text>
                 <Text style={styles.detailText}>Type: {type}</Text>
