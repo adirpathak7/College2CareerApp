@@ -42,7 +42,7 @@ const MainTabs = ({ setIsLoggedIn }) => {
                 tabBarIcon: ({ color, size }) => {
                     let iconName;
                     if (route.name === 'Home') iconName = 'home-outline';
-                    else if (route.name === 'Applications') iconName = 'document-text-outline';
+                    else if (route.name === 'Applications') iconName = 'business-outline';
                     else if (route.name === 'Vacancies') iconName = 'business-outline';
                     return <Ionicons name={iconName} size={size} color={color} />;
                 },

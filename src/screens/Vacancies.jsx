@@ -104,17 +104,32 @@ const Vacancies = () => {
 
   return (
     <>
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        {filteredVacancies.slice(0, visibleCount).map((vacancy) => (
-          <VacancyCard key={vacancy.vacancyId} {...vacancy} />
-        ))}
-        {visibleCount < filteredVacancies.length && (
-          <TouchableOpacity style={styles.button} onPress={() => setVisibleCount(visibleCount + 3)}>
-            <Text style={styles.buttonText}>Show More</Text>
-          </TouchableOpacity>
+      <ScrollView
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={filteredVacancies.length === 0 && styles.centerContent}
+      >
+        {filteredVacancies.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Ionicons name="briefcase-outline" size={60} color="#ccc" />
+            <Text style={styles.emptyText}>No vacancies found matching your criteria.</Text>
+            <Text style={styles.emptySubText}>Try adjusting the filters or check back later.</Text>
+          </View>
+        ) : (
+          <>
+            {filteredVacancies.slice(0, visibleCount).map((vacancy) => (
+              <VacancyCard key={vacancy.vacancyId} {...vacancy} />
+            ))}
+            {visibleCount < filteredVacancies.length && (
+              <TouchableOpacity style={styles.button} onPress={() => setVisibleCount(visibleCount + 3)}>
+                <Text style={styles.buttonText}>Show More</Text>
+              </TouchableOpacity>
+            )}
+          </>
         )}
       </ScrollView>
 
+      {/* FILTER MODAL */}
       <Modal
         visible={modalVisible}
         transparent
@@ -177,14 +192,16 @@ const Vacancies = () => {
             </TouchableOpacity>
           ))}
 
-          <TouchableOpacity onPress={() => {
-            setFilters({ sortBy: null, jobType: null, location: null });
-            setModalVisible(false);
-          }}>
+          <TouchableOpacity
+            onPress={() => {
+              setFilters({ sortBy: null, jobType: null, location: null });
+              setModalVisible(false);
+            }}
+          >
             <Text style={styles.clearFilters}>Clear Filters</Text>
           </TouchableOpacity>
         </View>
-      </Modal >
+      </Modal>
     </>
   );
 };
@@ -238,6 +255,29 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginTop: 10,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 100,
+  },
+  emptyText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#666',
+    marginTop: 10,
+    textAlign: 'center',
+  },
+  emptySubText: {
+    fontSize: 14,
+    color: '#999',
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  centerContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
   },
 });
 
