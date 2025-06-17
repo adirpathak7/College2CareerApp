@@ -83,6 +83,8 @@ const Login = ({ setIsLoggedIn }) => {
                 setIsLoggedIn(true)
             }
         } catch (error) {
+            // console.log(error);
+            
             console.log("error is: " + error.message);
             if (error.code === 'ECONNREFUSED') {
                 setApiResponse({ message: 'Server is taking too long to respond.', type: 'error' });

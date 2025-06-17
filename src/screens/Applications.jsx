@@ -1,4 +1,3 @@
-// screens/Applications.jsx
 import React, { useEffect, useState } from 'react';
 import {
   View,
@@ -13,11 +12,12 @@ import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLoader } from '../components/LoaderContext';
+import { Card } from 'react-native-paper';
 
 const statusColors = {
-  applied: '#007bff',
+  applied: '#4facfe',
   interviewScheduled: '#ffc107',
-  rejected: '#dc3545'
+  rejected: '#ff6b6b'
 };
 
 const Applications = () => {
@@ -55,43 +55,40 @@ const Applications = () => {
   }, []);
 
   const renderApplication = ({ item }) => (
-    <Animated.View style={[styles.card, { opacity: fadeAnim }]}>
-      <View style={styles.header}>
-        <Image source={{ uri: item.companyPicture }} style={styles.logo} />
-        <View>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.company}>{item.companyName}</Text>
-        </View>
-      </View>
+    <Animated.View style={{ opacity: fadeAnim }}>
+      <Card style={styles.card}>
+        <Card.Content>
+          <View style={styles.header}>
+            <Image source={{ uri: item.companyPicture }} style={styles.logo} />
+            <View>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.company}>{item.companyName}</Text>
+            </View>
+          </View>
 
-      <Text style={styles.description}>{item.description}</Text>
+          <Text style={styles.description}>{item.description}</Text>
 
-      <View style={styles.row}>
-        <Text style={styles.label}>📍 {item.city}, {item.state}</Text>
-        <Text style={[styles.status, { backgroundColor: statusColors[item.status] }]}>
-          {item.status}
-        </Text>
-      </View>
+          <Text style={styles.detailText}>📍 {item.city}, {item.state}</Text>
+          <Text style={styles.detailText}><Text style={styles.bold}>Type:</Text> {item.type.toUpperCase()}</Text>
+          <Text style={styles.detailText}><Text style={styles.bold}>Location:</Text> {item.locationType}</Text>
+          <Text style={styles.detailText}><Text style={styles.bold}>Package:</Text> {item.annualPackage}</Text>
+          <Text style={styles.detailText}><Text style={styles.bold}>Eligibility:</Text> {item.eligibility_criteria}</Text>
 
-      <Text style={styles.meta}>
-        <Text style={styles.bold}>Type:</Text> {item.type.toUpperCase()} |{' '}
-        <Text style={styles.bold}>Location:</Text> {item.locationType}
-      </Text>
-      <Text style={styles.meta}>
-        <Text style={styles.bold}>Package:</Text> {item.annualPackage}
-      </Text>
-      <Text style={styles.meta}>
-        <Text style={styles.bold}>Eligibility:</Text> {item.eligibility_criteria}
-      </Text>
+          <Text style={styles.date}>
+            <Ionicons name="calendar" size={14} /> Applied on: {new Date(item.appliedDate).toDateString()}
+          </Text>
 
-      <Text style={styles.date}>
-        <Ionicons name="calendar" size={14} /> Applied on:{' '}
-        {new Date(item.appliedDate).toDateString()}
-      </Text>
+          {item.status === 'rejected' && (
+            <Text style={styles.reason}>Reason: {item.reason}</Text>
+          )}
 
-      {item.status === 'rejected' && (
-        <Text style={styles.reason}>Reason: {item.reason}</Text>
-      )}
+          <View style={styles.statusContainer}>
+            <Text style={[styles.status, { backgroundColor: statusColors[item.status] || '#999' }]}>
+              {item.status}
+            </Text>
+          </View>
+        </Card.Content>
+      </Card>
     </Animated.View>
   );
 
@@ -119,89 +116,89 @@ export default Applications;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#f2f2f2'
+    padding: 15,
+    backgroundColor: '#f9f9f9',
   },
   card: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 6
+    marginBottom: 15,
+    borderRadius: 10,
+    elevation: 5,
+    backgroundColor: '#f8f6ff',
+    borderWidth: 0.3,
+    borderColor: '#ccc',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10
+    marginBottom: 10,
   },
   logo: {
     width: 50,
     height: 50,
-    borderRadius: 12,
-    marginRight: 10
+    borderRadius: 10,
+    marginRight: 12,
   },
   title: {
-    fontSize: 16,
-    fontWeight: 'bold'
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#222',
   },
   company: {
     fontSize: 14,
-    color: '#666'
+    color: '#555',
   },
   description: {
     fontSize: 14,
-    color: '#333',
-    marginBottom: 6
+    color: '#444',
+    marginBottom: 8,
   },
-  row: {
+  details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4
+    marginBottom: 8,
+  },
+  statusContainer: {
+    alignItems: 'flex-end',
+    marginTop: 10,
   },
   status: {
     color: '#fff',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
     fontSize: 12,
-    textTransform: 'capitalize'
+    overflow: 'hidden',
+    textTransform: 'capitalize',
+    elevation: 2,
   },
-  label: {
+  detailText: {
     fontSize: 13,
-    color: '#555'
-  },
-  meta: {
-    fontSize: 13,
-    color: '#444',
-    marginBottom: 3
+    color: '#666',
+    marginBottom: 4,
   },
   bold: {
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   date: {
     fontSize: 12,
-    color: '#999',
-    marginTop: 4
+    color: '#777',
+    marginTop: 6,
   },
   reason: {
-    marginTop: 5,
-    color: '#dc3545',
-    fontStyle: 'italic'
+    marginTop: 8,
+    color: '#ff6b6b',
+    fontStyle: 'italic',
+    fontSize: 13,
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 100
+    paddingTop: 100,
   },
   emptyText: {
     fontSize: 16,
     color: '#777',
-    textAlign: 'center'
-  }
+    textAlign: 'center',
+  },
 });
