@@ -42,7 +42,7 @@ const ProfileForm = ({ existingProfile, onSuccess, onCancel }) => {
     };
 
     const handleSubmit = async () => {
-        if (!inputData.studentName || !inputData.email || (!isEdit && (!inputData.rollNumber || !inputData.course || !inputData.graduationYear))) {
+        if (!inputData.studentName || (!isEdit && (!inputData.rollNumber || !inputData.course || !inputData.graduationYear))) {
             Alert.alert('Error', 'Please fill all required fields');
             return;
         }
