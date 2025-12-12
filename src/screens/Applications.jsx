@@ -64,12 +64,23 @@ const Applications = () => {
     navigation.setOptions({
       headerTitle: 'Applications',
       headerRight: () => (
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginRight: 15 }}>
-          <Ionicons name="funnel-outline" size={24} color="black" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+          {/* Filter Button */}
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginRight: 15 }}>
+            <Ionicons name="funnel-outline" size={24} color="black" />
+          </TouchableOpacity>
+
+          {/* Refresh Button */}
+          <TouchableOpacity onPress={fetchApplications}>
+            <Ionicons name="refresh-outline" size={24} color="black" />
+          </TouchableOpacity>
+
+        </View>
       ),
     });
   }, [navigation]);
+
 
   const fetchApplications = async () => {
     try {

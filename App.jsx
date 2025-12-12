@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LoaderProvider } from './src/components/LoaderContext';
 import Loader from './src/components/Loader';
-import Login from './src/screens/Login';
-import MainTabs from './src/navigation/MainTabs';
 import AppNavigator from './src/navigation/AppNavigator';
-
-const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -20,7 +16,25 @@ export default function App() {
       setIsLoggedIn(!!token);
       setLoading(false);
     };
+
     checkToken();
+  }, []);
+
+  useEffect(() => {
+    const axiosInterceptor = axios.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        if (error.response?.status === 401) {
+          await AsyncStorage.removeItem('userToken');
+          setIsLoggedIn(false);
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    return () => {
+      axios.interceptors.response.eject(axiosInterceptor);
+    };
   }, []);
 
   if (loading) return null;

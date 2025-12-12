@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useLayoutEffect } from 'react';
 import {
     View,
     Text,
@@ -8,15 +8,19 @@ import {
     Linking,
     TextInput,
     Modal,
-    Pressable
+    Pressable,
+    TouchableOpacity
 } from 'react-native';
 import { Card, Button } from 'react-native-paper';
 import axios from 'axios';
 import Constants from 'expo-constants';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLoader } from '../components/LoaderContext';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
-export default function Offers() {
+
+const Offers = () => {
     const [offers, setOffers] = useState([]);
     const { setLoading } = useLoader();
     const [apiResponse, setApiResponse] = useState({ message: '', type: '' });
@@ -26,6 +30,23 @@ export default function Offers() {
     const [rejectOfferId, setRejectOfferId] = useState(null);
 
     const [rejectApplicationId, setRejectApplicationId] = useState(null);
+
+    const navigation = useNavigation();
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerTitle: 'Applications',
+            headerRight: () => (
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+                    <TouchableOpacity onPress={fetchOffers}>
+                        <Ionicons name="refresh-outline" size={24} color="black" />
+                    </TouchableOpacity>
+
+                </View>
+            ),
+        });
+    }, [navigation]);
 
     const fetchOffers = async () => {
         setLoading(true);
@@ -327,3 +348,4 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
 });
+export default Offers;

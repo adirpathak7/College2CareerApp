@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import {
     View, Text, TextInput, TouchableOpacity,
     StyleSheet, ScrollView, KeyboardAvoidingView,
-    Platform, Animated, Linking
+    Platform, Animated
 } from 'react-native';
 import axios from 'axios';
 import message from '../message.json';
@@ -12,15 +12,26 @@ import { useLoader } from '../components/LoaderContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 
-const Login = ({ setIsLoggedIn }) => {
+const Register = () => {
 
-    const navigation = useNavigation();
     const { setLoading } = useLoader();
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
+    const confirmPassRef = useRef(null);
+    const navigation = useNavigation();
 
-    const [inputData, setInputData] = useState({ email: '', password: '' });
-    const [inputError, setInputError] = useState({ email: '', password: '' });
+    const [inputData, setInputData] = useState({
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
+
+    const [inputError, setInputError] = useState({
+        email: '',
+        password: '',
+        confirmPassword: '',
+    });
+
     const [apiResponse, setApiResponse] = useState({ message: '', type: '' });
 
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -39,17 +50,38 @@ const Login = ({ setIsLoggedIn }) => {
         setApiResponse({ message: '', type: '' });
     };
 
-    const handleLogin = async () => {
+    useEffect(() => {
+        if (apiResponse.message) {
+            const timer = setTimeout(() => {
+                setApiResponse({ message: '', type: '' });
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [apiResponse]);
+
+    const handleRegister = async () => {
         const errors = {};
 
         if (!inputData.email) {
-            errors.email = message.empty + "email";
+            errors.email = message.empty + 'email';
             emailRef.current?.focus();
         }
 
         if (!inputData.password) {
-            errors.password = message.empty + "password";
+            errors.password = message.empty + 'password';
             passwordRef.current?.focus();
+        }
+
+        if (!inputData.confirmPassword) {
+            errors.confirmPassword = message.empty + 'confirm password';
+            confirmPassRef.current?.focus();
+        }
+
+        if (inputData.password && inputData.confirmPassword &&
+            inputData.password !== inputData.confirmPassword
+        ) {
+            errors.confirmPassword = "Password & Confirm Password do not match";
+            confirmPassRef.current?.focus();
         }
 
         if (Object.keys(errors).length > 0) {
@@ -61,33 +93,32 @@ const Login = ({ setIsLoggedIn }) => {
             setLoading(true);
 
             const formData = new FormData();
-            formData.append('email', inputData.email);
-            formData.append('password', inputData.password);
+            formData.append("email", inputData.email);
+            formData.append("password", inputData.password);
+            formData.append("roleId", 2);
 
             const response = await axios.post(
-                `${Constants.expoConfig.extra.BASE_URL}/api/college2career/login`,
+                `${Constants.expoConfig.extra.BASE_URL}/api/college2career/register`,
                 formData,
-                { headers: { "Content-Type": "multipart/form-data" }, timeout: 6000 }
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                    timeout: 6000,
+                }
             );
 
             if (response.data.status === false) {
-                setApiResponse({ message: response.data.message, type: 'error' });
-                setInputData(prev => ({ ...prev, password: '' }));
+                setApiResponse({ message: response.data.message, type: "error" });
             } else {
-                await AsyncStorage.setItem("userToken", response.data.data);
-                await AsyncStorage.setItem("autoLogin", "true");
-                setIsLoggedIn(true);
+                setApiResponse({ message: "Registration Successful!", type: "success" });
+                setInputData({ email: "", password: "", confirmPassword: "" });
             }
+
         } catch (error) {
-            console.log("Login error: " + error.message);
+            console.log("error is: " + error.message);
             setApiResponse({ message: "Something went wrong.", type: "error" });
         } finally {
             setLoading(false);
         }
-    };
-
-    const openForgotPassword = () => {
-        Linking.openURL("http://localhost:5173/forgotPassword");
     };
 
     return (
@@ -100,16 +131,20 @@ const Login = ({ setIsLoggedIn }) => {
                 style={{ flex: 1 }}
                 keyboardVerticalOffset={Platform.OS === "android" ? 80 : 0}
             >
-                <ScrollView contentContainerStyle={styles.container}>
 
+                <ScrollView contentContainerStyle={styles.container}>
                     <Animated.View style={{ opacity: fadeAnim, width: '100%' }}>
-                        <Text style={styles.heading}>Welcome Back 👋</Text>
+                        <Text style={styles.heading}>Create New Account</Text>
 
                         {apiResponse.message ? (
-                            <Text style={[
-                                styles.responseMessage,
-                                apiResponse.type === "success" ? styles.success : styles.error
-                            ]}>
+                            <Text
+                                style={[
+                                    styles.responseMessage,
+                                    apiResponse.type === "success"
+                                        ? styles.success
+                                        : styles.error
+                                ]}
+                            >
                                 {apiResponse.type === "success" ? "Success: " : "Error: "}
                                 {apiResponse.message}
                             </Text>
@@ -137,20 +172,28 @@ const Login = ({ setIsLoggedIn }) => {
                         />
                         {inputError.password && <Text style={styles.errorText}>{inputError.password}</Text>}
 
-                        <TouchableOpacity onPress={openForgotPassword}>
-                            <Text style={styles.linkText}>Forgot Password?</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Confirm Password"
+                            value={inputData.confirmPassword}
+                            ref={confirmPassRef}
+                            onChangeText={(text) => handleInputChange('confirmPassword', text)}
+                            secureTextEntry
+                            placeholderTextColor="#888"
+                        />
+                        {inputError.confirmPassword &&
+                            <Text style={styles.errorText}>{inputError.confirmPassword}</Text>
+                        }
+
+                        <TouchableOpacity style={styles.button} onPress={handleRegister}>
+                            <Text style={styles.buttonText}>Register</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                            <Text style={styles.buttonText}>Login</Text>
-                        </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+                        <TouchableOpacity onPress={() => navigation.navigate("Login")}>
                             <Text style={styles.bottomText}>
-                                New user? <Text style={styles.linkText2}>Create an account</Text>
+                                Already have an account? <Text style={styles.linkText2}>Login</Text>
                             </Text>
                         </TouchableOpacity>
-
                     </Animated.View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -158,7 +201,7 @@ const Login = ({ setIsLoggedIn }) => {
     );
 };
 
-export default Login;
+export default Register;
 
 const styles = StyleSheet.create({
     gradient: { flex: 1 },
@@ -188,24 +231,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         alignSelf: 'flex-start',
     },
-    linkText: {
-        color: '#fff',
-        textAlign: "right",
-        marginBottom: 15,
-        fontSize: 14,
-        textDecorationLine: "underline",
-    },
-    linkText2: {
-        color: "#fff",
-        fontWeight: "bold",
-        textDecorationLine: "underline",
-    },
-    bottomText: {
-        color: "#fff",
-        marginTop: 20,
-        textAlign: "center",
-        fontSize: 14,
-    },
     button: {
         backgroundColor: '#fff',
         paddingVertical: 15,
@@ -225,6 +250,23 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         textAlign: 'center',
     },
-    success: { backgroundColor: '#d4edda', color: '#155724' },
-    error: { backgroundColor: '#f8d7da', color: '#721c24' },
+    success: {
+        backgroundColor: '#d4edda',
+        color: '#155724',
+    },
+    error: {
+        backgroundColor: '#f8d7da',
+        color: '#721c24',
+    },
+    bottomText: {
+        color: "#fff",
+        marginTop: 20,
+        textAlign: "center",
+        fontSize: 14,
+    },
+    linkText2: {
+        color: "#fff",
+        textDecorationLine: "underline",
+        fontWeight: "bold"
+    }
 });

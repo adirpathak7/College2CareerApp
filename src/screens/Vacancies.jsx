@@ -23,10 +23,21 @@ const Vacancies = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: 'Applications',
       headerRight: () => (
-        <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginRight: 15 }}>
-          <Ionicons name="funnel-outline" size={24} color="black" />
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+          {/* Filter Button */}
+          <TouchableOpacity onPress={() => setModalVisible(true)} style={{ marginRight: 15 }}>
+            <Ionicons name="funnel-outline" size={24} color="black" />
+          </TouchableOpacity>
+
+          {/* Refresh Button */}
+          <TouchableOpacity onPress={fetchVacancies}>
+            <Ionicons name="refresh-outline" size={24} color="black" />
+          </TouchableOpacity>
+
+        </View>
       ),
     });
   }, [navigation]);
@@ -48,24 +59,24 @@ const Vacancies = () => {
     { label: 'Remote', value: 'remote' },
   ];
 
-  useEffect(() => {
-    const fetchVacancies = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`${Constants.expoConfig.extra.BASE_URL}/api/college2career/users/companies/getHiringVacancies`);
-        if (response.data.status) {
-          setVacancies(response.data.data);
-        } else {
-          setApiResponse({ message: response.data.message, type: 'error' });
-        }
-      } catch (error) {
-        alert('Failed to fetch vacancies.');
-        console.log('Failed to fetch vacancies: ' + error);
-      } finally {
-        setLoading(false);
+  const fetchVacancies = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`${Constants.expoConfig.extra.BASE_URL}/api/college2career/users/companies/getHiringVacancies`);
+      if (response.data.status) {
+        setVacancies(response.data.data);
+      } else {
+        setApiResponse({ message: response.data.message, type: 'error' });
       }
-    };
+    } catch (error) {
+      alert('Failed to fetch vacancies.');
+      console.log('Failed to fetch vacancies: ' + error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchVacancies();
   }, []);
 
