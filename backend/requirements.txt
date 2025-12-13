@@ -1,0 +1,4 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pymupdf        # pip package name for PyMuPDF

@@ -98,6 +98,18 @@ const Home = ({ navigation }) => {
                 </>
             )}
 
+            <Card style={styles.card}>
+                <Card.Content>
+                    <Title>Resume ATS Checker</Title>
+                    <Paragraph>Upload your resume & get instant ATS score.</Paragraph>
+                </Card.Content>
+                <Card.Actions>
+                    <Button onPress={() => navigation.navigate('ATSChecker')}>
+                        Check Now
+                    </Button>
+                </Card.Actions>
+            </Card>
+
             <Text style={styles.footerNote}>Stay updated and don’t miss any opportunity!</Text>
         </ScrollView>
     );

@@ -1,0 +1,110 @@
+{
+    "languages": [
+        "Java",
+        "Python",
+        "C",
+        "C++",
+        "C#",
+        "JavaScript",
+        "TypeScript",
+        "SQL",
+        "Kotlin",
+        "Bash",
+        "Shell"
+    ],
+    "frontend": [
+        "HTML",
+        "CSS",
+        "JavaScript",
+        "React.js",
+        "React Native",
+        "Tailwind CSS",
+        "Bootstrap",
+        "PrimeFaces",
+        "JSF",
+        "XML",
+        "JSON",
+        "AJAX"
+    ],
+    "backend": [
+        "Spring Boot",
+        "Spring MVC",
+        "Hibernate",
+        "JPA",
+        "Microservices",
+        "ASP.NET Core",
+        "ASP.NET Web API",
+        "Node.js",
+        "Express.js",
+        "NestJS",
+        "Django",
+        "FastAPI",
+        "REST API",
+        "JWT Authentication"
+    ],
+    "databases": [
+        "MySQL",
+        "SQL Server",
+        "PostgreSQL",
+        "MongoDB",
+        "Firestore"
+    ],
+    "devops_cloud": [
+        "AWS",
+        "Azure",
+        "Docker",
+        "Kubernetes",
+        "CI/CD",
+        "Git",
+        "GitHub",
+        "GitLab",
+        "Jenkins",
+        "GitHub Actions",
+        "Cloudinary",
+        "Azure Blob Storage"
+    ],
+    "ai_ml": [
+        "ChatGPT Integration",
+        "Rasa Chatbot",
+        "NLP",
+        "Machine Learning",
+        "Pandas",
+        "NumPy",
+        "OpenCV"
+    ],
+    "tools": [
+        "VS Code",
+        "Visual Studio",
+        "Postman",
+        "MySQL Workbench",
+        "SSMS",
+        "NetBeans",
+        "Android Studio"
+    ],
+    "power_keywords": [
+        "Full Stack Developer",
+        "Backend Developer",
+        "API Development",
+        "Scalable Applications",
+        "System Design",
+        "Real-time Updates",
+        "Database Optimization",
+        "Role-based Access Control",
+        "Secure Authentication",
+        "Performance Optimization",
+        "Enterprise Applications",
+        "Distributed Systems"
+    ],
+    "action_words": [
+        "Developed",
+        "Implemented",
+        "Integrated",
+        "Optimized",
+        "Designed",
+        "Automated",
+        "Refactored",
+        "Deployed",
+        "Troubleshooted",
+        "Collaborated"
+    ]
+}
