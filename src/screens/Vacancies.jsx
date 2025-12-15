@@ -23,7 +23,7 @@ const Vacancies = () => {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerTitle: 'Applications',
+      headerTitle: 'Vacancies',
       headerRight: () => (
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 

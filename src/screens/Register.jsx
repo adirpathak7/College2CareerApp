@@ -114,7 +114,7 @@ const Register = () => {
             }
 
         } catch (error) {
-            console.log("error is: " + error.message);
+            console.log("error is: " + error);
             setApiResponse({ message: "Something went wrong.", type: "error" });
         } finally {
             setLoading(false);

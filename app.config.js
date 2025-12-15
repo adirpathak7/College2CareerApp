@@ -6,7 +6,8 @@ export default {
         slug: "college2careerapp",
         version: "1.0.0",
         extra: {
-            BASE_URL: process.env.BASE_URL
+            BASE_URL: "http://10.241.80.208:7072",
+            SOCKET_URL: "http://10.241.80.208:5000"
         }
     }
 };

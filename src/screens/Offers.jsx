@@ -35,7 +35,7 @@ const Offers = () => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
-            headerTitle: 'Applications',
+            headerTitle: 'Offers',
             headerRight: () => (
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
 

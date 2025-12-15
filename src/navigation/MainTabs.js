@@ -4,12 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
 
-import Register from '../screens/Register';
 import Home from '../screens/Home';
 import Applications from '../screens/Applications';
 import Vacancies from '../screens/Vacancies';
 import Profile from '../screens/Profile';
 import Offers from '../screens/Offers';
+import InboxScreen from '../screens/InboxScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,6 +44,9 @@ const MainTabs = ({ setIsLoggedIn }) => {
                         case 'Home':
                             iconName = 'home-outline';
                             break;
+                        case 'Inbox':
+                            iconName = 'chatbubble-ellipses-outline';
+                            break;
                         case 'Applications':
                             iconName = 'document-text-outline';
                             break;
@@ -65,9 +68,17 @@ const MainTabs = ({ setIsLoggedIn }) => {
             })}
         >
             <Tab.Screen name="Home" component={Home} />
+
+            <Tab.Screen
+                name="Inbox"
+                component={InboxScreen}
+                options={{ headerShown: false }}
+            />
+
             <Tab.Screen name="Applications" component={Applications} />
             <Tab.Screen name="Vacancies" component={Vacancies} />
             <Tab.Screen name="Offers" component={Offers} />
+
             <Tab.Screen
                 name="Profile"
                 component={Profile}
